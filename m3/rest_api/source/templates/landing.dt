@@ -18,12 +18,11 @@ html
 
             div.content
                 h1 VirusTotal
-                p ceva descriere
+                p To test malicious files or URLs, press one of the buttons
 
                 div
-                    <button type="button"><span></span>FILE</button>
-                    <button type="button"><span></span>URL</button>
-                    <button type="button"><span></span>SEARCH</button>
+                    <button type="button" onclick="location.href='/test_file'"><span></span>FILE</button>
+                    <button type="button" onclick="location.href='/test_URL'"><span></span>URL</button>
 
         :css
             body {
@@ -42,9 +41,9 @@ html
             }
 
             .navebar {
-                width: 85%;
+                width: 95%;
                 margin: auto;
-                padding: 35px 0;
+                padding: 25px 0;
                 display: flex;
                 align-items: center;
                 justify-content: space-between;

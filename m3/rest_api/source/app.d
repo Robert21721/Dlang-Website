@@ -4,7 +4,10 @@ import virus_total;
 import db_conn;
 import vibe.http.status;
 
+import std.process;
 import std.stdio;
+import std.utf : byChar;
+import std.file;
 
 void main()
 {
@@ -12,7 +15,6 @@ void main()
     auto settings = new HTTPServerSettings;
     settings.port = 8080;
     settings.bindAddresses = ["0.0.0.0"];
-    settings.sessionStore = new MemorySessionStore;
 
     auto router = new URLRouter;
     // router.registerWebInterface(virusTotalAPI);
@@ -22,9 +24,12 @@ void main()
     router.get("/register", &register);
     router.get("/home", &home);
     router.get("/error", &error);
+    router.get("/test_file", &test_file);
 
     router.post("/post/login", &logUser);
     router.post("/post/register", &authUser);
+    router.post("/post/input_file", &input_file);
+
 
 
     auto listener = listenHTTP(settings, router);
@@ -61,6 +66,11 @@ void home(HTTPServerRequest req, HTTPServerResponse res)
 void error(HTTPServerRequest req, HTTPServerResponse res)
 {
     render!("error.dt")(res);
+}
+
+void test_file(HTTPServerRequest req, HTTPServerResponse res)
+{
+    render!("test_file.dt")(res);
 }
 
 void logUser(HTTPServerRequest req, HTTPServerResponse res)
@@ -113,6 +123,21 @@ void authUser(HTTPServerRequest req, HTTPServerResponse res)
     }
 
     res.redirect("/home"); 
+}
+
+void input_file(HTTPServerRequest req, HTTPServerResponse res)
+{
+    // string title = req.form.get("title");
+
+    // logInfo(title);
+
+    auto file = "file" in req.files;
+    auto dbClient = DBConnection("root", "example", "mongo", "27017", "testing");
+    auto virusTotalAPI = new VirusTotalAPI(dbClient);
+
+    auto a = file.filename.to!string();
+    logInfo(a);
 
     
+    res.redirect("/");
 }
