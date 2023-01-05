@@ -127,17 +127,33 @@ void authUser(HTTPServerRequest req, HTTPServerResponse res)
 
 void input_file(HTTPServerRequest req, HTTPServerResponse res)
 {
-    // string title = req.form.get("title");
-
-    // logInfo(title);
 
     auto file = "file" in req.files;
-    auto dbClient = DBConnection("root", "example", "mongo", "27017", "testing");
-    auto virusTotalAPI = new VirusTotalAPI(dbClient);
 
-    auto a = file.filename.to!string();
-    logInfo(a);
+    logInfo(file.filename.to!string());
+    logInfo(file.tempPath.to!string());
 
+    try {
+        moveFile(file.tempPath, Path("./") ~ file.filename);
+        logInfo("Uploaded successfully!");
+
+    } catch(Exception e) {
+        logInfo("Exception thrown, trying copy");
+        copyFile(file.tempPath, Path("./") ~ file.filename);
+    }
+
+
+    auto data = cast(ubyte[]) read(file.filename.to!string());
+    logInfo(cast(string) data);
+    // TODO
+
+    try {
+        removeFile(Path("./") ~ file.filename);
+        logInfo("file removed");
+
+    } catch(Exception e) {
+        logInfo("file does not exist");
+    }
     
     res.redirect("/");
 }

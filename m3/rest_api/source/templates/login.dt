@@ -130,7 +130,11 @@ html
             })
             .then((response) => {
                 console.log(response);
-                window.location.href = response.url;
+                if (!response.url.localeCompare("http://0.0.0.0:8080/error")) {
+                    alert("Error: Invalid email address or password");
+                } else {
+                    window.location.href = response.url;
+                }
             });
         }
 
