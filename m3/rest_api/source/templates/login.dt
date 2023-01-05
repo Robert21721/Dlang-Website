@@ -2,6 +2,9 @@ doctype html
 
 html
     head
+        :javascript
+            window.history.forward();
+
         title First a Website
         <link rel="shortcut icon" href="https://www.computerhope.com/favicon.ico">
 
@@ -22,6 +25,8 @@ html
 
     :css
         body {
+            padding: 0;
+            margin: 0;
             height: 110vh;
             display: grid;
             place-items: center;

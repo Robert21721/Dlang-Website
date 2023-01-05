@@ -218,7 +218,7 @@ struct DBConnection
         NOT_IMPLEMENTED
     }
 
-    FileRet addFile(string userId, immutable ubyte[] binData, string fileName)
+    FileRet addFile(string userId, immutable ubyte[] binData, string fileName, string securityLevel)
     {
         if (binData.empty)
         {
@@ -233,6 +233,7 @@ struct DBConnection
         file.userId = userId;
         file.binData ~= binData;
         file.fileName = fileName;
+        file.securityLevel = securityLevel;
         file.digest ~= digest!SHA512(file.binData).toHexString();
 
         Nullable!File fileExists = files.findOne!File(["digest": file.digest]);
@@ -402,13 +403,13 @@ unittest
     const email = "edi@gmail.com";
 
     // Test addFile
-    auto fileRes = helper.addFile(email, [], "test");
+    auto fileRes = helper.addFile(email, [], "test", "high");
     assert(fileRes == DBConnection.FileRet.ERR_EMPTY_FILE);
 
-    fileRes = helper.addFile(email, [1, 2, 3, 4, 5], "test");
+    fileRes = helper.addFile(email, [1, 2, 3, 4, 5], "test", "high");
     assert(fileRes == DBConnection.FileRet.OK);
 
-    fileRes = helper.addFile(email, [1, 2, 3, 4, 5], "test");
+    fileRes = helper.addFile(email, [1, 2, 3, 4, 5], "test", "high");
     assert(fileRes == DBConnection.FileRet.FILE_EXISTS);
 
     // Test getFile

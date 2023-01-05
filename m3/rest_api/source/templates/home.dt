@@ -1,6 +1,3 @@
-// pe toti zeii, tre sa meargaaaaaaaaaaaa
-
-
 doctype html
 
 html
@@ -10,13 +7,21 @@ html
 
     body
         div.banner
-            div.navebar
-                a(href="#")
-                ul
-                    li: a(href="/") Logout
 
+            div.content
+                h1 VirusTotal
+                p To test malicious files or URLs, press one of the buttons
 
+                div
+                    <button type="button" onclick="location.href='home/test_file'"><span></span>FILE</button>
+                    <button type="button" onclick="location.href='/test_URL'"><span></span>URL</button>
+                div
+                    <button type="button" onclick="location.href='home/user_info'"><span></span>SEE YOUR FILES</button>
+                    <button type="button" onclick="location.href='/test_URL'"><span></span>SEE YOUR URLS</button>
 
+            form(method='post', action='/post/logout')
+                <button type="submit" class="myButton">Logout</button>
+    
     :css
         body {
             padding: 0;
@@ -33,48 +38,10 @@ html
             background-color: gray; 
         }
 
-        .navebar {
-            width: 95%;
-            margin: auto;
-            padding: 15px 0;
-            display: flex;
-            align-items: right;
-            justify-content: space-between;
-
-        }
-
-        .navebar ul li {
-            list-style: none;
-            display: inline-block;
-            margin: 0 20px; 
-            /*padding: 0 20px; */
-            position: relative; 
-        }
-
-        .navebar ul li a {
-            text-decoration: none;
-            color:#FFEA11;
-            text-transform: capitalize;
-        }
-
-        .navebar ul li::after{
-            content: '';
-            height: 2px;
-            width: 0; /*100% */
-            background: #009688;
-            position: absolute;
-            left: 0;
-            bottom: -8px;
-            transition: 0.5s;
-        }
-
-        .navebar ul li:hover::after {
-            width: 100%;
-        }
-
         .content {
             width: 100%;
             position: absolute;
+            top: 50%;
             transform: translateY(-50%);
             text-align: center;
             color: white;
@@ -82,7 +49,7 @@ html
 
         .content h1 {
             text-transform: uppercase;
-            font-size: 50px;
+            font-size: 40px;
             margin-top: 80px;
         }
     
@@ -131,3 +98,15 @@ html
             border: none;
         }
 
+        form:submit:hover span {
+            width: 100%;
+        }
+
+        form:submit:hover {
+            border: none;
+        }
+
+        .myButton {
+            top: 100%;
+            left: 90%;
+        }

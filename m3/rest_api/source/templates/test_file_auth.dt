@@ -2,36 +2,21 @@ doctype html
 
 html
     head
-        :javascript
-            window.history.forward();
-    
         title First a Website
         <link rel="shortcut icon" href="https://www.computerhope.com/favicon.ico">
 
     body
-        <form onsubmit="submitForm(event)">
+        <form method="POST" enctype="multipart/form-data" action="/post/input_file_auth">
             div.container
-                h1 Register
-                <input type="text" id="name" name="name">
-                <label for="name"><span>Name</span></label>
-
-                <input type="text" id="userEmail" name="userEmail">
-                <label for="userEmail"><span>Email</span></label>
-
-                <input type="text" id="username" name="username">
-                <label for="username"><span>Username</span></label>
-
-                <input type="text" name="password">
-                <label for="password"><span>Password</span></label>
-            
-                <button type="submit">Register</button>
+                h1 Choose a file
+                <input type="file" id="file" name="file">
+                <label for="file"></label>
+                <button type="submit">Submit</button>
         </form>
 
 
     :css
         body {
-            padding: 0;
-            margin: 0;
             height: 110vh;
             display: grid;
             place-items: center;
@@ -67,6 +52,7 @@ html
         }
 
         input {
+            opacity: 70%;
             position: relative;
             margin-bottom: 2rem;
             padding: 0.5rem 0;
@@ -119,32 +105,3 @@ html
             color: white;
             transform: translateY(-2rem);
         }
-
-
-    :javascript
-        function submitForm(event) {
-            event.preventDefault();
-            const url = "http://0.0.0.0:8080/post/register";
-            const formData = new FormData(event.target);
-            const data = {};
-            formData.forEach((value, key) => (data[key] = value));
-            console.log(data);
-            console.log(JSON.stringify(data));
-
-            fetch(url, {
-                method: "POST",
-                body: JSON.stringify(data),
-                headers: {
-                    "Content-Type": "application/json",
-                },
-            })
-            .then((response) => {
-                console.log(response);
-                if (!response.url.localeCompare("http://0.0.0.0:8080/error")) {
-                    alert("Error: Invalid email address or password");
-                } else {
-                    window.location.href = response.url;
-                }
-            });
-        }
-

@@ -59,7 +59,7 @@ interface VirusTotalAPIRoot
     @anyAuth
     @method(HTTPMethod.POST)
     @path("add_file")
-    Json addFile(string userEmail, immutable ubyte[] binData, string fileName);
+    Json addFile(string userEmail, immutable ubyte[] binData, string fileName, string securityLevel);
 
     @noAuth
     @method(HTTPMethod.GET)
@@ -206,9 +206,9 @@ override:
 
     // Files management
 
-    Json addFile(string userEmail, immutable ubyte[] binData, string fileName)
+    Json addFile(string userEmail, immutable ubyte[] binData, string fileName, string securityLevel)
     {
-        auto res = dbClient.addFile(userEmail, binData, fileName);
+        auto res = dbClient.addFile(userEmail, binData, fileName, securityLevel);
         final switch (res)
         {
             case DBConnection.FileRet.OK:
