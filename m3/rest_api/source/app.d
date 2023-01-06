@@ -8,6 +8,7 @@ import std.process;
 import std.stdio;
 import std.file;
 import std.string;
+import std.algorithm;
 
 DBConnection dbClient;
 VirusTotalAPI virusTotalAPI;
@@ -33,7 +34,7 @@ void main()
     router.get("/error", &error);
     router.get("/test_file", &test_file);
     router.get("/file_response", &file_response);
-    router.get("/URL_response", &file_response);
+    router.get("/URL_response", &URL_response);
     router.get("/test_URL", &test_URL);
 
     router.get("/home", &home);
@@ -399,7 +400,7 @@ void input_URL(HTTPServerRequest req, HTTPServerResponse res)
 
     logInfo(URL);
     
-    res.redirect("/");
+    res.redirect("/URL_response");
 }
 
 void input_URL_auth(HTTPServerRequest req, HTTPServerResponse res)
@@ -442,7 +443,7 @@ string URLMessage(string URL)
 void URL_response(HTTPServerRequest req, HTTPServerResponse res)
 {
     string str = URLMessage(currentURLName);
-    render!("file_response.dt", str)(res);
+    render!("url_response.dt", str)(res);
 }
 
 void file_response(HTTPServerRequest req, HTTPServerResponse res)
