@@ -5,7 +5,7 @@ html
 
     body
         <article><h1>#{str}</h1></article>
-        div
+        div.buttons
             <button type="button" onclick="location.href='/test_file'"><span></span>NEW FILE</button>
             <button type="button" onclick="location.href='/test_URL'"><span></span>NEW URL</button>
             <button type="button" onclick="location.href='/'"><span></span>BACK</button>
@@ -34,7 +34,7 @@ html
             );
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
-            text-align: left;
+            text-align: center;
         }
 
         h1 {
@@ -98,4 +98,8 @@ html
 
         button:hover {
             border: none;
+        }
+
+        .buttons {
+            text-align: center;
         }
