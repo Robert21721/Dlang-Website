@@ -6,11 +6,13 @@ import vibe.http.status;
 
 import std.process;
 import std.stdio;
-import std.utf : byChar;
 import std.file;
+import std.string;
 
 DBConnection dbClient;
 VirusTotalAPI virusTotalAPI;
+string currentFileName;
+string currentURLName;
 
 void main()
 {
@@ -30,9 +32,9 @@ void main()
     router.get("/register", &register);
     router.get("/error", &error);
     router.get("/test_file", &test_file);
+    router.get("/file_response", &file_response);
+    router.get("/URL_response", &file_response);
     router.get("/test_URL", &test_URL);
-    // router.get("/home/test_file", &test_file_auth);
-
 
     router.get("/home", &home);
     router.get("/home/user_files", &user_files);
@@ -78,7 +80,7 @@ void register(HTTPServerRequest req, HTTPServerResponse res)
 
 void home(HTTPServerRequest req, HTTPServerResponse res)
 {
-    logInfo(req.session.get("email", "default@gmail.com").to!string());
+    // logInfo(req.session.get("email", "default@gmail.com").to!string());
     render!("home.dt")(res);
 }
 
@@ -340,7 +342,7 @@ void input_file(HTTPServerRequest req, HTTPServerResponse res)
         copyFile(file.tempPath, Path("./") ~ file.filename);
     }
     
-    // AICI VA FI DOAR VERIFICATA
+    currentFileName = file.filename.to!string();
 
     try {
         removeFile(Path("./") ~ file.filename);
@@ -350,7 +352,7 @@ void input_file(HTTPServerRequest req, HTTPServerResponse res)
         logInfo("file does not exist");
     }
     
-    res.redirect("/");
+    res.redirect("/file_response");
 }
 
 
@@ -392,7 +394,7 @@ void input_URL(HTTPServerRequest req, HTTPServerResponse res)
 {
     string URL = req.form.get("URL");
 
-   
+   currentURLName = URL;
     // AICI VA FI DOAR VERIFICATA
 
     logInfo(URL);
@@ -402,7 +404,7 @@ void input_URL(HTTPServerRequest req, HTTPServerResponse res)
 
 void input_URL_auth(HTTPServerRequest req, HTTPServerResponse res)
 {
-    string URL = req.form.get("URL");
+    string URL = req.form.get("NO VIRUSES, ONLY BUGSURL");
 
    
     // AICI VA FI DOAR VERIFICATA
@@ -412,4 +414,39 @@ void input_URL_auth(HTTPServerRequest req, HTTPServerResponse res)
     logInfo(URL);
     
     res.redirect("/home");
+}
+
+string fileMessage(string fileName)
+{
+    if (fileName.endsWith(".d")) {
+        return "NO MALWARE, NO DOCUMENTATION";
+    } else if (fileName.endsWith(".c")) {
+        return "NO VIRUSES, ONLY BUGS";
+    } else if (fileName.endsWith(".rs")) {
+        return "I AM NOT SHURE, FILE DID NOT COMPILE";
+    } else {
+        return "YOU ARE NOT A PROGRAMMER, SO YOU ARE (MENTALLY) SAFE";
+    }
+}
+
+string URLMessage(string URL)
+{
+    // nu i place asta
+    if (canFind(URL, "https")) {
+        return "SECURE";
+    } else {
+        return "NOT SHURE";
+    }
+}
+
+void URL_response(HTTPServerRequest req, HTTPServerResponse res)
+{
+    string str = URLMessage(currentURLName);
+    render!("file_response.dt", str)(res);
+}
+
+void file_response(HTTPServerRequest req, HTTPServerResponse res)
+{
+    string str = fileMessage(currentFileName);
+    render!("file_response.dt", str)(res);
 }
