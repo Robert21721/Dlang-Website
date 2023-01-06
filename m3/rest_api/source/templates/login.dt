@@ -15,7 +15,7 @@ html
                 <input type="text" id="userEmail" name="userEmail">
                 <label for="userEmail"><span>Email</span></label>
                 
-                <input type="text" name="password">
+                <input type="password" name="password">
                 <label for="password"><span>Password</span></label>
             
                 <button type="submit">Login</button>

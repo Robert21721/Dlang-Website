@@ -93,21 +93,62 @@ void user_info(HTTPServerRequest req, HTTPServerResponse res)
     auto email = req.session.get("email", "default@gmail.com").to!string();
     auto files = virusTotalAPI.getUserFiles(email);
 
-    auto data = "<html><head>\n<title>Tell me!</title>\n</head><body>";
+    auto data = "<html><head>\n<title>Tell me!</title>\n</head><body>\n<article>\n<h1>My Files</h1><br></br><br></br>";
 
     for (int i = 0; i < files.length; i++) {
         auto file = files[i];
         string fileName = file["fileName"].get!string;
         string securityLevel = file["securityLevel"].get!string;
 
-        data~="\n<h1>fileName: "~fileName~"</h1>\n";
-        data~="<h2>securityLevel: "~securityLevel~"</h2>\n";
+        data~="\n<h2>fileName: "~fileName~"</h2>";
+        data~="<p>securityLevel: "~securityLevel~"</p>\n";
 
         logInfo(fileName);
         logInfo(securityLevel);
     }
 
-    data ~= "</body></html>";
+    data ~= "\n<style>
+        body {
+            background: linear-gradient(rgba(0,0,0,0.5),rgba(0, 0,0,0.5)), url(https://wallpaperaccess.com/full/516010.jpg);
+            min-block-size: 100%;
+            min-inline-size: 100%;
+            box-sizing: border-box;
+            display: grid;
+            place-content: up;
+            font-family: system-ui;
+            font-size: min(200%, 5vmin);
+        }
+
+        article {
+            background: linear-gradient(
+                to right, 
+                hsl(98 100% 62%), 
+                hsl(204 100% 59%)
+            );
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-align: center;
+        }
+
+        h1 {
+            font-size: 10vmin;
+            line-height: 1.1;
+        }
+
+        h1, p, body {
+            margin: 0;
+        }
+
+        p {
+            font-family: \"Dank Mono\", ui-monospace, monospace;
+        }
+
+        html {
+            block-size: 100%;
+            inline-size: 100%;
+        }
+        </style>\n";
+    data ~= "</article>\n</body></html>";
 
     logInfo(data);
 

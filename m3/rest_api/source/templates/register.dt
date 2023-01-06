@@ -21,7 +21,7 @@ html
                 <input type="text" id="username" name="username">
                 <label for="username"><span>Username</span></label>
 
-                <input type="text" name="password">
+                <input type="password" name="password">
                 <label for="password"><span>Password</span></label>
             
                 <button type="submit">Register</button>
