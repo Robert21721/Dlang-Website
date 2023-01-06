@@ -305,7 +305,7 @@ struct DBConnection
         NOT_IMPLEMENTED
     }
 
-    UrlRet addUrl(string userId, string urlAddress)
+    UrlRet addUrl(string userId, string urlAddress, string securityLevel)
     {
         if (urlAddress.empty)
         {
@@ -315,16 +315,29 @@ struct DBConnection
         string collectionName = "urls";
         MongoCollection urls = client.getCollection(dbName ~ "." ~ collectionName);
 
-        Nullable!Url urlExists = urls.findOne!Url(["addr": urlAddress]);
-        if (!urlExists.isNull)
-        {
-            return UrlRet.URL_EXISTS;
-        }
+
+        // Nullable!Url urlExists = urls.findOne!Url(["addr": urlAddress]);
+        // if (!urlExists.isNull)
+        // {
+        //     return UrlRet.URL_EXISTS;
+        // }
 
         Url url;
         url.id = BsonObjectID.generate();
         url.userId = userId;
         url.addr = urlAddress;
+        url.securityLevel = securityLevel;
+
+
+        Url[] userUrls = getUrls(userId);
+
+        for (int i = 0; i < userUrls.length; i++) {
+            auto idxUrl = userUrls[i];
+
+            if (idxUrl.addr == url.addr) {
+                return UrlRet.URL_EXISTS;
+            }
+        }
 
         urls.insert(url);
         return UrlRet.OK;
@@ -451,13 +464,13 @@ unittest
     const email = "edi@gmail.com";
 
     // Test addUrl
-    auto urlRes = helper.addUrl(email, "");
+    auto urlRes = helper.addUrl(email, "", "high");
     assert(urlRes == DBConnection.UrlRet.ERR_EMPTY_URL);
 
-    urlRes = helper.addUrl(email, "123.net");
+    urlRes = helper.addUrl(email, "123.net", "high");
     assert(urlRes == DBConnection.UrlRet.OK);
 
-    urlRes = helper.addUrl(email, "123.net");
+    urlRes = helper.addUrl(email, "123.net", "high");
     assert(urlRes == DBConnection.UrlRet.URL_EXISTS);
 
     // Test getUrl

@@ -38,7 +38,7 @@ interface VirusTotalAPIRoot
     @anyAuth
     @method(HTTPMethod.POST)
     @path("add_url") // the path could also be "/url/add", thus defining the url "namespace" in the URL
-    Json addUrl(string userEmail, string urlAddress);
+    Json addUrl(string userEmail, string urlAddress, string securityLevel);
 
     @noAuth
     @method(HTTPMethod.GET)
@@ -158,9 +158,9 @@ override:
 
     // URLs management
 
-    Json addUrl(string userEmail, string urlAddress)
+    Json addUrl(string userEmail, string urlAddress, string securityLevel)
     {
-        auto res = dbClient.addUrl(userEmail, urlAddress);
+        auto res = dbClient.addUrl(userEmail, urlAddress, securityLevel);
         final switch (res)
         {
             case DBConnection.UrlRet.OK:

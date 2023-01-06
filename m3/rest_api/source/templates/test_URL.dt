@@ -1,0 +1,109 @@
+doctype html
+
+html
+    head
+
+        title First a Website
+        <link rel="shortcut icon" href="https://www.computerhope.com/favicon.ico">
+
+    body
+        form(method='post', action='/post/input_URL', enctype='multipart/form-data')
+            div.container
+                h1 ENTER A URL
+                <input type="text" id="URL" name="URL">
+                <label for="URL"><span>URL</span></label>
+                
+                <button type="submit">Submit</button>
+
+
+    :css
+        body {
+            padding: 0;
+            margin: 0;
+            height: 110vh;
+            display: grid;
+            place-items: center;
+            font-family: sans-serif;
+            background-image: linear-gradient(rgba(0,0,0,0.5),rgba(0, 0,0,0.5)), url(https://wallpaperaccess.com/full/516010.jpg);
+            color: rgb(225,225,255);
+        }
+
+        .container {
+            display: flex;
+            flex-direction: column;
+            padding: 3rem 5rem;
+            border-radius: 2em;
+            background-color: rgba(0,0,0,0.75);
+            width: 30rem;
+        }
+
+        h1 {
+            text-align: center;
+            margin: 1rem;
+            margin-bottom: 5rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        label span{
+            display: inline-block;
+            font-size: 1.25rem;
+            letter-spacing: 2px;
+            position: relative;
+            bottom: 4rem;
+            transition: transform 200ms ease-in-out;
+        }
+
+        input {
+            position: relative;
+            margin-bottom: 2rem;
+            padding: 0.5rem 0;
+            background-color: transparent;
+            outline: none;
+            border: unset;
+            border-bottom: 1.5px solid white;
+            font-size: 1.25rem;
+            letter-spacing: 1.5px;
+            color: white;
+            z-index: 1;
+        }
+
+        button {
+            display: inline-block;
+            margin: 1rem 0;
+            padding: 0.75rem;
+            cursor: pointer;
+            outline: none;
+            border: none;
+            border-radius: 0.25em;
+            font-size: 1rem;
+            letter-spacing: 1.5px;
+            font-weight: 500;
+            transition: all 100ms ease-in-out;
+            background-color: rgb(225,225,255);
+        }
+
+        button:hover {
+            background-color: rgb(235,235,235);
+        }
+
+        a {
+            color: rgb(235, 235, 235);
+        }
+
+        a:hover {
+            color: rgb(215, 215, 215);
+        }
+
+        p {
+            text-align: center;
+        }
+
+        input:focus, input:valid {
+            border-bottom: 2px solid white;
+        }
+
+        input:focus + label span, input:valid + label span {
+            color: white;
+            transform: translateY(-2rem);
+        }

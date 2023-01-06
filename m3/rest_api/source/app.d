@@ -30,12 +30,16 @@ void main()
     router.get("/register", &register);
     router.get("/error", &error);
     router.get("/test_file", &test_file);
-    router.get("/home/test_file", &test_file_auth);
+    router.get("/test_URL", &test_URL);
+    // router.get("/home/test_file", &test_file_auth);
 
 
     router.get("/home", &home);
-    router.get("/home/user_info", &user_info);
+    router.get("/home/user_files", &user_files);
+    router.get("/home/user_URLs", &user_URLs);
+
     router.get("/home/test_file_auth", &test_file_auth);
+    router.get("/home/test_URL_auth", &test_URL_auth);
 
     router.post("/post/login", &logUser);
     router.post("/post/register", &authUser);
@@ -43,6 +47,8 @@ void main()
 
     router.post("/post/input_file", &input_file);
     router.post("/post/input_file_auth", &input_file_auth);
+    router.post("/post/input_URL", &input_URL);
+    router.post("/post/input_URL_auth", &input_URL_auth);
 
     auto listener = listenHTTP(settings, router);
 
@@ -91,7 +97,17 @@ void test_file_auth(HTTPServerRequest req, HTTPServerResponse res)
     render!("test_file_auth.dt")(res);
 }
 
-void user_info(HTTPServerRequest req, HTTPServerResponse res)
+void test_URL(HTTPServerRequest req, HTTPServerResponse res)
+{
+    render!("test_URL.dt")(res);
+}
+
+void test_URL_auth(HTTPServerRequest req, HTTPServerResponse res)
+{
+    render!("test_URL_auth.dt")(res);
+}
+
+void user_files(HTTPServerRequest req, HTTPServerResponse res)
 {
     auto email = req.session.get("email", "default@gmail.com").to!string();
     auto files = virusTotalAPI.getUserFiles(email);
@@ -177,9 +193,86 @@ void user_info(HTTPServerRequest req, HTTPServerResponse res)
 
 
     res.writeBody(data, "text/html; charset=UTF-8");
-    render!("user_info.dt")(res);
+    render!("user_files.dt")(res);
     
 }
+
+void user_URLs(HTTPServerRequest req, HTTPServerResponse res)
+{
+    auto email = req.session.get("email", "default@gmail.com").to!string();
+    auto URLs = virusTotalAPI.getUserUrls(email);
+
+    logInfo("user curent: "~email);
+
+    auto data = "<html><head>\n<title>Tell me!</title>\n</head><body>\n<article>\n<h1>My URLs</h1><br></br>";
+
+    for (int i = 0; i < URLs.length; i++) {
+        auto URL = URLs[i];
+
+        string URL_name = URL["addr"].get!string;
+        string securityLevel = URL["securityLevel"].get!string;
+
+        
+        data~="\n<h2>URL: "~URL_name~"</h2>";
+        data~="<p>securityLevel: "~securityLevel~"</p>\n";
+
+        // logInfo(fileName);
+        // logInfo(securityLevel);
+        // logInfo(text);
+    }
+
+    data ~= "\n<style>
+        body {
+            background: linear-gradient(rgba(0,0,0,0.5),rgba(0, 0,0,0.5)), url(https://wallpaperaccess.com/full/516010.jpg);
+            min-block-size: 100%;
+            min-inline-size: 100%;
+            box-sizing: border-box;
+            display: grid;
+            place-content: up;
+            font-family: system-ui;
+            font-size: 2vmin;
+        }
+
+        article {
+            background: linear-gradient(
+                to right, 
+                hsl(98 100% 62%), 
+                hsl(204 100% 59%)
+            );
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-align: left;
+        }
+
+        h1 {
+            text-align: center;
+            font-size: 10vmin;
+            line-height: 1.1;
+        }
+
+        h1, p, body {
+            margin: 0;
+        }
+
+        p {
+            font-family: \"Dank Mono\", ui-monospace, monospace;
+        }
+
+        html {
+            block-size: 100%;
+            inline-size: 100%;
+        }
+        </style>\n";
+    data ~= "</article>\n</body></html>";
+
+    // logInfo(data);
+
+
+    res.writeBody(data, "text/html; charset=UTF-8");
+    render!("user_URLs.dt")(res);
+    
+}
+
 
 void logUser(HTTPServerRequest req, HTTPServerResponse res)
 {
@@ -291,6 +384,32 @@ void input_file_auth(HTTPServerRequest req, HTTPServerResponse res)
     } catch(Exception e) {
         logInfo("file does not exist");
     }
+    
+    res.redirect("/home");
+}
+
+void input_URL(HTTPServerRequest req, HTTPServerResponse res)
+{
+    string URL = req.form.get("URL");
+
+   
+    // AICI VA FI DOAR VERIFICATA
+
+    logInfo(URL);
+    
+    res.redirect("/");
+}
+
+void input_URL_auth(HTTPServerRequest req, HTTPServerResponse res)
+{
+    string URL = req.form.get("URL");
+
+   
+    // AICI VA FI DOAR VERIFICATA
+    string email = req.session.get("email", "default@gmail.com").to!string();
+    virusTotalAPI.addUrl(email, URL, "high");
+
+    logInfo(URL);
     
     res.redirect("/home");
 }

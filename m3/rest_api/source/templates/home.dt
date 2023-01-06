@@ -13,11 +13,11 @@ html
                 p To test malicious files or URLs, press one of the buttons
 
                 div
-                    <button type="button" onclick="location.href='home/test_file'"><span></span>FILE</button>
-                    <button type="button" onclick="location.href='/test_URL'"><span></span>URL</button>
+                    <button type="button" onclick="location.href='/home/test_file_auth'"><span></span>FILE</button>
+                    <button type="button" onclick="location.href='/home/test_URL_auth'"><span></span>URL</button>
                 div
-                    <button type="button" onclick="location.href='home/user_info'"><span></span>SEE YOUR FILES</button>
-                    <button type="button" onclick="location.href='/test_URL'"><span></span>SEE YOUR URLS</button>
+                    <button type="button" onclick="location.href='/home/user_files'"><span></span>SEE YOUR FILES</button>
+                    <button type="button" onclick="location.href='/home/user_URLs'"><span></span>SEE YOUR URLS</button>
 
             form(method='post', action='/post/logout')
                 <button type="submit" class="myButton">Logout</button>
