@@ -12,8 +12,8 @@ import std.algorithm;
 
 DBConnection dbClient;
 VirusTotalAPI virusTotalAPI;
-string currentFileName;
-string currentURLName;
+string currentFileMessage;
+string currentURLMessage;
 
 void main()
 {
@@ -34,8 +34,8 @@ void main()
     router.get("/error", &error);
     router.get("/test_file", &test_file);
     router.get("/file_response", &file_response);
-    router.get("/URL_response", &URL_response);
     router.get("/test_URL", &test_URL);
+    router.get("/URL_response", &URL_response);
 
     router.get("/home", &home);
     router.get("/home/user_files", &user_files);
@@ -43,6 +43,8 @@ void main()
 
     router.get("/home/test_file_auth", &test_file_auth);
     router.get("/home/test_URL_auth", &test_URL_auth);
+    router.get("/home/file_response", &file_response_auth);
+    router.get("/home/URL_response", &URL_response_auth);
 
     router.post("/post/login", &logUser);
     router.post("/post/register", &authUser);
@@ -343,7 +345,7 @@ void input_file(HTTPServerRequest req, HTTPServerResponse res)
         copyFile(file.tempPath, Path("./") ~ file.filename);
     }
     
-    currentFileName = file.filename.to!string();
+    currentFileMessage = fileMessage(file.filename.to!string());
 
     try {
         removeFile(Path("./") ~ file.filename);
@@ -370,15 +372,22 @@ void input_file_auth(HTTPServerRequest req, HTTPServerResponse res)
         copyFile(file.tempPath, Path("./") ~ file.filename);
     }
 
+    currentFileMessage = fileMessage(file.filename.to!string());
 
     auto binData = cast(immutable ubyte[]) read(file.filename.to!string());
     // logInfo(cast(string) binData);
 
     string email = req.session.get("email", "default@gmail.com").to!string();
-    logInfo("file auth current user "~email);
-    virusTotalAPI.addFile(email, binData, file.filename.to!string(), "high");
+    // logInfo("file auth current user "~email);
 
-    // PLUS VERIFICARE
+    auto json = virusTotalAPI.addFile(email, binData, file.filename.to!string(), "high");
+    // logInfo("am introdus fisierul cu urmatoarele caracterisitci: " ~ json.toString());
+
+    string message = json.toString();
+    if (canFind(message, "already present in the database")) {
+        currentFileMessage = "FILE ALREADY EXISTS";
+    }
+
 
     try {
         removeFile(Path("./") ~ file.filename);
@@ -388,14 +397,14 @@ void input_file_auth(HTTPServerRequest req, HTTPServerResponse res)
         logInfo("file does not exist");
     }
     
-    res.redirect("/home");
+    res.redirect("/home/file_response");
 }
 
 void input_URL(HTTPServerRequest req, HTTPServerResponse res)
 {
     string URL = req.form.get("URL");
 
-   currentURLName = URL;
+    currentURLMessage = URLMessage(URL);
     // AICI VA FI DOAR VERIFICATA
 
     logInfo(URL);
@@ -405,16 +414,16 @@ void input_URL(HTTPServerRequest req, HTTPServerResponse res)
 
 void input_URL_auth(HTTPServerRequest req, HTTPServerResponse res)
 {
-    string URL = req.form.get("NO VIRUSES, ONLY BUGSURL");
+    string URL = req.form.get("URL");
 
-   
+    currentURLMessage = URLMessage(URL);
     // AICI VA FI DOAR VERIFICATA
     string email = req.session.get("email", "default@gmail.com").to!string();
     virusTotalAPI.addUrl(email, URL, "high");
 
     logInfo(URL);
     
-    res.redirect("/home");
+    res.redirect("/home/URL_response");
 }
 
 string fileMessage(string fileName)
@@ -424,7 +433,7 @@ string fileMessage(string fileName)
     } else if (fileName.endsWith(".c")) {
         return "NO VIRUSES, ONLY BUGS";
     } else if (fileName.endsWith(".rs")) {
-        return "I AM NOT SHURE, FILE DID NOT COMPILE";
+        return "I AM NOT SURE, FILE DID NOT COMPILE";
     } else {
         return "YOU ARE NOT A PROGRAMMER, SO YOU ARE (MENTALLY) SAFE";
     }
@@ -436,18 +445,32 @@ string URLMessage(string URL)
     if (canFind(URL, "https")) {
         return "SECURE";
     } else {
-        return "NOT SHURE";
+        return "NOT SURE";
     }
 }
 
 void URL_response(HTTPServerRequest req, HTTPServerResponse res)
-{
-    string str = URLMessage(currentURLName);
-    render!("url_response.dt", str)(res);
+{   
+    string str = currentURLMessage;
+    render!("response.dt", str)(res);
 }
 
 void file_response(HTTPServerRequest req, HTTPServerResponse res)
 {
-    string str = fileMessage(currentFileName);
-    render!("file_response.dt", str)(res);
+    string str = currentFileMessage;
+    render!("response.dt", str)(res);
+}
+
+
+
+void URL_response_auth(HTTPServerRequest req, HTTPServerResponse res)
+{
+    string str = currentURLMessage;
+    render!("response_auth.dt", str)(res);
+}
+
+void file_response_auth(HTTPServerRequest req, HTTPServerResponse res)
+{
+    string str = currentFileMessage;
+    render!("response_auth.dt", str)(res);
 }
