@@ -227,6 +227,7 @@ struct DBConnection
 
         string collectionName = "files";
         MongoCollection files = client.getCollection(dbName ~ "." ~ collectionName);
+        File[] userFiles = getFiles(userId);
 
         File file;
         file.id = BsonObjectID.generate();
@@ -236,11 +237,19 @@ struct DBConnection
         file.securityLevel = securityLevel;
         file.digest ~= digest!SHA512(file.binData).toHexString();
 
-        Nullable!File fileExists = files.findOne!File(["digest": file.digest]);
-        if (!fileExists.isNull)
-        {
-            return FileRet.FILE_EXISTS;
+
+        // Nullable!File fileExists = files.findOne!File(["digest": file.digest]);
+        for (int i = 0; i < userFiles.length; i++) {
+            auto idxFile = userFiles[i];
+
+            if (idxFile.digest == file.digest) {
+                return FileRet.FILE_EXISTS;
+            }
         }
+        // if (!fileExists.isNull)
+        // {
+        //     return FileRet.FILE_EXISTS;
+        // }
 
         files.insert(file);
         return FileRet.OK;
