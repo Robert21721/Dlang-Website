@@ -14,6 +14,8 @@ DBConnection dbClient;
 VirusTotalAPI virusTotalAPI;
 string currentFileMessage;
 string currentURLMessage;
+string URLSecurityLevel;
+bool ok = false;
 
 void main()
 {
@@ -68,22 +70,33 @@ void main()
 
 void start(HTTPServerRequest req, HTTPServerResponse res)
 {
+    if (ok) {
+        render!("home.dt")(res);
+    } else {
     render!("landing.dt")(res);
+    }
 }
 
 void login(HTTPServerRequest req, HTTPServerResponse res)
 {
+    if (ok) {
+        render!("home.dt")(res);
+    } else {
     render!("login.dt")(res);
+    }
 }
 
 void register(HTTPServerRequest req, HTTPServerResponse res)
 {
+    if (ok) {
+        render!("home.dt")(res);
+    } else {
     render!("register.dt")(res);
+    }
 }
 
 void home(HTTPServerRequest req, HTTPServerResponse res)
 {
-    // logInfo(req.session.get("email", "default@gmail.com").to!string());
     render!("home.dt")(res);
 }
 
@@ -295,6 +308,7 @@ void logUser(HTTPServerRequest req, HTTPServerResponse res)
         res.redirect("/error");
     }
 
+    ok = true;
     auto session = res.startSession();
     session.set("email", email);
     res.redirect("/home"); 
@@ -320,13 +334,15 @@ void authUser(HTTPServerRequest req, HTTPServerResponse res)
         res.redirect("/error");
     }
 
+    ok = true;
     auto session = res.startSession();
 	session.set("email", email);
     res.redirect("/home"); 
 }
 
 void logout(HTTPServerRequest req, HTTPServerResponse res)
-{
+{   
+    ok = false;
     res.terminateSession();
     logInfo("am iesiiiiiiit");
     res.redirect("/"); 
@@ -419,7 +435,7 @@ void input_URL_auth(HTTPServerRequest req, HTTPServerResponse res)
     currentURLMessage = URLMessage(URL);
     // AICI VA FI DOAR VERIFICATA
     string email = req.session.get("email", "default@gmail.com").to!string();
-    virusTotalAPI.addUrl(email, URL, "high");
+    virusTotalAPI.addUrl(email, URL, URLSecurityLevel);
 
     logInfo(URL);
     
@@ -443,8 +459,10 @@ string URLMessage(string URL)
 {
     // nu i place asta
     if (canFind(URL, "https")) {
+        URLSecurityLevel = "high";
         return "SECURE";
     } else {
+        URLSecurityLevel = "low";
         return "NOT SURE";
     }
 }
@@ -460,7 +478,6 @@ void file_response(HTTPServerRequest req, HTTPServerResponse res)
     string str = currentFileMessage;
     render!("response.dt", str)(res);
 }
-
 
 
 void URL_response_auth(HTTPServerRequest req, HTTPServerResponse res)
